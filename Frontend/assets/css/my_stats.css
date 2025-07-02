@@ -1,0 +1,15 @@
+:root {
+    --stats-bg: rgb(44, 44, 44);
+    --stats-accent: rgb(0, 183, 255);
+    --stats-text: white;
+    --stats-shadow:rgba(0, 0, 0, 0.3);
+}
+
+
+.my-stats {
+    padding: 20px;
+    background-color: var(--stats-bg);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px -2px var(--stats-shadow);
+    margin: 70px 10px;
+}
