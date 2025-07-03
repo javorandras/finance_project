@@ -1,3 +1,12 @@
+:root {
+    --bg: rgb(44, 44, 44);
+    --accent: rgb(0, 183, 255);
+    --accent-hover: rgb(0, 150, 220);
+    --text: white;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --item-text: rgb(200, 200, 200);
+}
+
 *,
 body,
 html {
@@ -7,5 +16,46 @@ html {
 
 body {
     background: rgb(33, 33, 33);
-    min-height: 200vh;
+}
+
+.page-content {
+    min-height: 100vh;
+    transition: filter 0.3s ease;
+}
+
+@media (min-width: 768px) {
+    .page-content {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+}
+
+#scrollToTopBtn {
+    display: none;
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    z-index: 100;
+    background: var(--accent);
+    color: var(--text);
+    border: none;
+    outline: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px var(--shadow);
+    transition: background 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+#scrollToTopBtn:hover {
+    background: var(--accent);
+    color: var(--text);
+}
+
+#scrollToTopBtn:focus {
+    outline: none;
 }

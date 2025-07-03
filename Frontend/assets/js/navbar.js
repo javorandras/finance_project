@@ -10,8 +10,7 @@ $(document).ready(function () {
     }
 
     $(window).on('scroll', function () {
-        if ($(window).scrollTop() > 10) { // Adjust the value as needed
-            console.log('Scrolled more than 10px');
+        if ($(window).scrollTop() > 10) {
             $navbar.addClass('navbar-transparent');
         } else {
             $navbar.removeClass('navbar-transparent');

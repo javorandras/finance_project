@@ -1,0 +1,112 @@
+:root {
+    --auth-bg: rgb(22, 22, 22);
+    --auth-accent: rgb(0, 183, 255);
+    --auth-accent-hover: rgb(0, 150, 220);
+    --auth-text: white;
+    --auth-shadow: rgba(0, 0, 0, 0.3);
+}
+
+.auth-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--auth-shadow);
+    z-index: 9999;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.auth-overlay .auth-form {
+    display: none;
+    margin-top: -500px;
+    background: var(--auth-bg);
+    color: var(--auth-text);
+    padding: 32px 40px;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px var(--auth-shadow);
+    min-width: 320px;
+    max-width: 90vw;
+    opacity: 0;
+    transition: margin-top 0.5s cubic-bezier(.68, -0.55, .27, 1.55), opacity 0.5s;
+}
+
+.auth-overlay .auth-form.show {
+    margin-top: 60px;
+    opacity: 1;
+}
+
+.auth-overlay .auth-form h2 {
+    text-align: center;
+    margin-bottom: 16px;
+    color: var(--auth-accent);
+}
+
+.auth-overlay .auth-form input {
+    width: 100%;
+    height: 40px;
+    font-size: 1rem;
+    padding: 0 12px;
+    margin-bottom: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--auth-text);
+    box-sizing: border-box;
+    transition: background-color 0.5s, border 0.5s;
+}
+
+.auth-overlay .auth-form input:focus {
+    outline: none;
+    border: 1px solid var(--auth-accent);
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.auth-overlay .auth-form button {
+    width: 100%;
+    padding: 8px;
+    background-color: var(--auth-accent);
+    color: var(--auth-text);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.auth-overlay .auth-form button:hover {
+    background-color: var(--auth-accent-hover);
+}
+
+.auth-overlay .auth-form p {
+    margin-top: 16px;
+    text-align: center;
+    color: var(--auth-text);
+}
+
+.auth-overlay .auth-form a {
+    text-align: center;
+    color: var(--auth-accent);
+    text-decoration: none;
+}
+
+.auth-overlay .auth-form .remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.auth-overlay .auth-form .remember-me input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--auth-accent);
+    margin: 0;
+}
+
+.auth-overlay .auth-form p.disclaimer {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 15px;
+}

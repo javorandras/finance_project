@@ -1,0 +1,96 @@
+:root {
+    --transactions-bg: rgb(44, 44, 44);
+    --transactions-accent: rgb(0, 183, 255);
+    --transactions-accent-hover: rgb(0, 150, 220);
+    --transactions-text: white;
+    --transactions-shadow:rgba(0, 0, 0, 0.3);
+    --transactions-item-text: rgb(200, 200, 200);
+}
+
+.transactions {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--transactions-bg);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px -2px var(--transactions-shadow);
+    margin: 5px 10px;
+}
+
+.transactions table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.transactions th, .transactions td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.transactions tbody tr:last-child th,
+.transactions tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.transactions thead {
+    background-color: var(--transactions-accent);
+    color: var(--transactions-text);
+}
+.transactions tbody tr {
+    background-color: var(--transactions-bg);
+    color: var(--transactions-item-text);
+}
+
+.new-transaction {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: var(--transactions-bg);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 5px 10px;
+    border-radius: 10px;
+}
+
+.new-transaction input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--transactions-text);
+    margin-right: 10px;
+}
+
+.new-transaction input:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.new-transaction button {
+    background-color: var(--transactions-accent);
+    color: var(--transactions-text);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.new-transaction button:hover {
+    background-color: var(--transactions-accent-hover);
+    transform: translateY(-2px);
+}
+
+.new-transaction-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.transactions th a {
+    color: var(--transactions-text);
+    text-decoration: none;
+    font-size: 10px;
+}
