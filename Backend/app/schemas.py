@@ -23,18 +23,6 @@ class UserLoginRequest(BaseModel):
     email: EmailStr
     password: str
 
-class UserFinancialSummary(BaseModel):
-    balance: Decimal
-    total_income: Decimal
-    total_expense: Decimal
-    savings: Decimal
-
-    class Config:
-        from_attributes = True  # optional: for ORM or model support
-        json_encoders = {
-            Decimal: lambda v: float(round(v, 2))  # control precision in output
-        }
-
 class UserResponse(BaseModel):
     id: int
     email: str
@@ -44,13 +32,19 @@ class UserResponse(BaseModel):
     total_income: Decimal
     total_expense: Decimal
     savings: Decimal
+    goal: Decimal
+
+class TokenResponse(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
+
 
 class TransactionType(str, Enum):
     income = "income"
     expense = "expense"
 
 class TransactionCreateRequest(BaseModel):
-    user_id: int
     amount: Decimal = Field(..., gt=0)
     description: str | None = None
     type: TransactionType
@@ -60,6 +54,18 @@ class TransactionUpdateRequest(BaseModel):
     description: Optional[str] = None
     date: Optional[datetime] = None
     type: Optional[str] = Field(None, pattern="^(income|expense)$")
+
+    class Config:
+        orm_mode = True
+
+
+class TransactionResponse(BaseModel):
+    id: int
+    user_id: int
+    amount: Decimal
+    type: TransactionType
+    description: Optional[str] = None
+    date: datetime
 
     class Config:
         orm_mode = True
