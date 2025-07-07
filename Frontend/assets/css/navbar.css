@@ -133,21 +133,3 @@ nav .menu-toggle i {
         display: flex;
     }
 }
-
-footer {
-    position: relative;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: var(--navbar-bg);
-    color: var(--navbar-text);
-    text-align: center;
-    padding: 10px 0;
-    font-size: 12px;
-    box-shadow: 0 -2px 8px var(--navbar-shadow);
-}
-
-footer a {
-    color: var(--navbar-accent);
-    text-decoration: none;
-}

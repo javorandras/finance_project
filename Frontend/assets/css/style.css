@@ -15,7 +15,22 @@ html {
 }
 
 body {
-    background: rgb(33, 33, 33);
+    background: url('../images/synthwave1.jpg') no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: -20px;
+    background: inherit;
+    background-size: cover;
+    background-position: center;
+    filter: blur(10px);
+    z-index: -1;
+    pointer-events: none;
+    transform: scale(1.05);
 }
 
 .page-content {
@@ -58,4 +73,29 @@ body {
 
 #scrollToTopBtn:focus {
     outline: none;
+}
+
+footer {
+    position: relative;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--navbar-bg);
+    color: var(--navbar-text);
+    text-align: center;
+    padding: 10px 0;
+    font-size: 12px;
+    box-shadow: 0 -2px 8px var(--navbar-shadow);
+}
+
+footer a {
+    color: var(--navbar-accent);
+    text-decoration: none;
+}
+
+.page-content h2 {
+    color: var(--text);
+    margin: 0 auto;
+    text-align: center;
+    padding-top: 75px;
 }

@@ -13,7 +13,7 @@
     background-color: var(--stats-bg);
     border-radius: 10px;
     box-shadow: 0 4px 12px -2px var(--stats-shadow);
-    margin: 70px 10px 0 10px;
+    margin: 20px 10px 0 10px;
     gap: 5px;
     color: white;
 }
@@ -36,7 +36,7 @@
         flex-direction: row;
         gap: 15px;
         padding: 15px 20px;
-        margin: 70px 10px 0 10px;
+        margin: 20px 10px 0 10px;
     }
 
     .my-stats .stat-item {
