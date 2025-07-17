@@ -73,3 +73,60 @@
     background: rgb(0, 150, 220);
     color: var(--panel-text);
 }
+
+#logoutPanel h2 {
+    color: white;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+#logoutPanel p {
+    color: var(--panel-text);
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#logoutPanel {
+    position: relative;
+}
+
+#logoutPanel .button-group {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    width: calc(100% - 20px);
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 0;
+}
+
+#logoutPanel .button-group button {
+    padding: 10px 24px;
+    background: var(--panel-accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease;
+    display: inline-block;
+    font-size: 1rem;
+}
+
+#logoutPanel .button-group .cancel-btn {
+    background: #ff5252;
+}
+
+#logoutPanel .button-group .logout-btn {
+    background: #00b7ff;
+}
+
+#logoutPanel .button-group .cancel-btn:hover {
+    background: #d32f2f;
+    color: var(--panel-text);
+}
+
+#logoutPanel .button-group .logout-btn:hover {
+    background: #0096dc;
+    color: var(--panel-text);
+}
