@@ -23,6 +23,22 @@ class UserLoginRequest(BaseModel):
     email: EmailStr
     password: str
 
+class UserUpdateRequest(BaseModel):
+    firstname: Optional[str] = None
+    lastname: Optional[str] = None
+    goal: Optional[Decimal] = Field(None, ge=0)
+
+    class Config:
+        orm_mode = True
+
+
+class AdminUserResponse(BaseModel):
+    user_id: int
+    email: str
+    firstname: str
+    lastname: str
+    logged_in_since: datetime
+
 class UserResponse(BaseModel):
     id: int
     email: str
