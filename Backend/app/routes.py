@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, status, Depends, Path, Query, Requ
 from passlib.context import CryptContext
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
-from starlette.responses import JSONResponse
+from starlette.responses import JSONResponse, RedirectResponse
 
 from app.auth import create_access_token, get_current_user
 from app.categorizer import Categorizer
@@ -15,19 +15,21 @@ from app.schemas import (
     PredictionResponse, TokenResponse, TransactionCreateRequest,
     TransactionRequest, TransactionUpdateRequest, UserLoginRequest,
     UserRegisterRequest, UserResponse, TransactionResponse,
+    UserUpdateRequest, AdminUserResponse,
 )
 from app.utils import clean_description, verify_password
 
 
 class APIConfig:
     REFRESH_TOKEN_EXPIRE_DAYS = 7
-    SECURE = False
+    SECURE = True
     V1_PREFIX = "/api/v1"
 
     class Endpoints:
         TRANSACTIONS = "/transactions"
         USERS = "/users"
         PREDICTIONS = "/predictions"
+        ADMIN = "/admin"
 
 
 class TokenManager:
@@ -94,6 +96,9 @@ transaction_router = APIRouter(prefix=APIConfig.Endpoints.TRANSACTIONS, tags=["T
 user_router = APIRouter(prefix=APIConfig.Endpoints.USERS, tags=["Users"])
 prediction_router = APIRouter(prefix=APIConfig.Endpoints.PREDICTIONS, tags=["Predictions"])
 
+admin_router = APIRouter(prefix=APIConfig.Endpoints.ADMIN, tags=["Admin"])
+
+
 model = Categorizer()
 model.load("models/categorizer.pkl")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -102,8 +107,8 @@ transaction_service = TransactionService()
 
 
 @router.get("/")
-def read_root():
-    return {"message": "Finance Categorizer API is running."}
+async def redirect_to_frontend():
+    return RedirectResponse(url="/index.html")
 
 
 @prediction_router.post("/predict", response_model=PredictionResponse)
@@ -176,13 +181,19 @@ def refresh_token(request: Request):
 
     with engine.begin() as conn:
         result = conn.execute(
-            text("SELECT user_id, expires_at FROM refresh_tokens WHERE token = :token"),
+            text("""
+                SELECT user_id, expires_at
+                FROM refresh_tokens 
+                WHERE token = :token
+            """),
             {"token": refresh_token_from_req}
         ).fetchone()
 
         if not result:
             raise HTTPException(status_code=401, detail="Invalid refresh token")
-        if result.expires_at < datetime.now(timezone.utc):
+            
+        expires_at = result.expires_at.replace(tzinfo=timezone.utc)
+        if expires_at < datetime.now(timezone.utc):
             conn.execute(text("DELETE FROM refresh_tokens WHERE token = :token"),
                          {"token": refresh_token_from_req})
             raise HTTPException(status_code=401, detail="Refresh token expired")
@@ -210,10 +221,40 @@ def logout_user(request: Request):
     response.delete_cookie("refresh_token", path=f"{APIConfig.V1_PREFIX}/users/refresh")
     return response
 
+@admin_router.get("/logged-in-users", response_model=List[AdminUserResponse])
+async def get_logged_in_users(current_user: int = Depends(get_current_user)):
+        with engine.begin() as conn:
+            # Check if the current user is an admin
+            admin_check = conn.execute(
+                text("SELECT is_admin FROM users WHERE id = :id"),
+                {"id": current_user}
+            ).fetchone()
+
+            if not admin_check or not admin_check.is_admin:
+                raise HTTPException(status_code=403, detail="Admin access required")
+
+            # Get all users with active refresh tokens
+            results = conn.execute(
+                text("""
+                     SELECT u.id               as user_id,
+                            u.email,
+                            u.firstname,
+                            u.lastname,
+                            MIN(rt.created_at) as logged_in_since
+                     FROM users u
+                              JOIN refresh_tokens rt ON u.id = rt.user_id
+                     WHERE rt.expires_at > NOW()
+                     GROUP BY u.id, u.email, u.firstname, u.lastname
+                     ORDER BY logged_in_since DESC
+                     """)
+            ).mappings().all()
+
+            return list(results)
+
 
 @user_router.get("/me", response_model=UserResponse)
 def get_user_profile(user_id: int = Depends(get_current_user)):
-    with engine.connect() as conn:
+    with engine.begin() as conn:
         result = conn.execute(
             text("""
                  SELECT id,
@@ -236,13 +277,37 @@ def get_user_profile(user_id: int = Depends(get_current_user)):
         return dict(result._mapping)
 
 
+@user_router.put("/me", response_model=UserResponse)
+async def update_user_profile(
+    update_data: UserUpdateRequest,
+    current_user: int = Depends(get_current_user)
+):
+    with engine.begin() as conn:
+        conn.execute(
+            text("""
+                UPDATE users 
+                SET firstname = :firstname,
+                    lastname = :lastname,
+                    goal = :goal
+                WHERE id = :id
+                """),
+            {
+                "firstname": update_data.firstname,
+                "lastname": update_data.lastname,
+                "goal": update_data.goal,
+                "id": current_user
+            }
+        )
+    return get_user_profile(current_user)
+
+
 @transaction_router.get("/transactions", response_model=List[TransactionResponse])
 async def get_transactions(
         skip: int = Query(0, ge=0, description="Number of transactions to skip"),
         limit: int = Query(10, ge=1, le=100, description="Maximum number of transactions to return"),
         current_user: int = Depends(get_current_user)
 ):
-    with engine.connect() as conn:
+    with engine.begin() as conn:
         results = conn.execute(
             text("""
                  SELECT id, user_id, amount, type, description, date
@@ -330,5 +395,6 @@ async def delete_transaction(
 router.include_router(user_router)
 router.include_router(transaction_router)
 router.include_router(prediction_router)
+router.include_router(admin_router)
 
 __all__ = ["router"]

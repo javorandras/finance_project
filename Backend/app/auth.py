@@ -11,8 +11,8 @@ class AuthConfig:
     load_dotenv()
     SECRET_KEY: str = os.getenv("SECRET_KEY", "")
     ALGORITHM: str = "HS256"
-    TOKEN_EXPIRE_MINUTES: int = 0
-    TOKEN_EXPIRE_SECONDS: int = 5
+    TOKEN_EXPIRE_MINUTES: int = 60
+    TOKEN_EXPIRE_SECONDS: int = 0
     AUTH_HEADER: str = "Bearer"
 
     @classmethod
