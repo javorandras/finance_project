@@ -1,2 +1,6 @@
 /Backend/.env
 __pycache__
+*.pem
+.DS_Store
+.idea
+app/__pycache__
