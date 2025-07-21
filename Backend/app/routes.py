@@ -15,7 +15,7 @@ from app.schemas import (
     PredictionResponse, TokenResponse, TransactionCreateRequest,
     TransactionRequest, TransactionUpdateRequest, UserLoginRequest,
     UserRegisterRequest, UserResponse, TransactionResponse,
-    UserUpdateRequest, AdminUserResponse,
+    UserUpdateRequest, AdminUserResponse, AdminUpdateRequest,
 )
 from app.utils import clean_description, verify_password
 
@@ -221,7 +221,7 @@ def logout_user(request: Request):
     response.delete_cookie("refresh_token", path=f"{APIConfig.V1_PREFIX}/users/refresh")
     return response
 
-@admin_router.get("/logged-in-users", response_model=List[AdminUserResponse])
+@admin_router.get("/users", response_model=List[AdminUserResponse])
 async def get_logged_in_users(current_user: int = Depends(get_current_user)):
         with engine.begin() as conn:
             # Check if the current user is an admin
@@ -252,6 +252,35 @@ async def get_logged_in_users(current_user: int = Depends(get_current_user)):
             return list(results)
 
 
+@admin_router.put("/users/{user_id}/admin")
+def set_user_admin(
+    user_id: int,
+    update: AdminUpdateRequest,
+    current_user: int = Depends(get_current_user)
+):
+    with engine.begin() as conn:
+        # Admin check
+        admin_check = conn.execute(
+            text("SELECT is_admin FROM users WHERE id = :id"),
+            {"id": current_user}
+        ).fetchone()
+        if not admin_check or not admin_check.is_admin:
+            raise HTTPException(status_code=403, detail="Admin access required")
+
+        # Cannot demote yourself
+        if user_id == current_user and not update.is_admin:
+            raise HTTPException(status_code=400, detail="Cannot remove admin rights from yourself")
+
+        result = conn.execute(
+            text("UPDATE users SET is_admin = :is_admin WHERE id = :user_id"),
+            {"is_admin": update.is_admin, "user_id": user_id}
+        )
+        if result.rowcount == 0:
+            raise HTTPException(status_code=404, detail="User not found")
+
+    return {"message": f"User {user_id} admin status set to {update.is_admin}"}
+
+
 @user_router.get("/me", response_model=UserResponse)
 def get_user_profile(user_id: int = Depends(get_current_user)):
     with engine.begin() as conn:
@@ -275,6 +304,37 @@ def get_user_profile(user_id: int = Depends(get_current_user)):
         if not result:
             raise HTTPException(status_code=404, detail="User not found")
         return dict(result._mapping)
+
+
+@admin_router.delete("/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_user(
+    user_id: int,
+    current_user: int = Depends(get_current_user)
+):
+    with engine.begin() as conn:
+        admin_check = conn.execute(
+            text("SELECT is_admin FROM users WHERE id = :id"),
+            {"id": current_user}
+        ).fetchone()
+        if not admin_check or not admin_check.is_admin:
+            raise HTTPException(status_code=403, detail="Admin access required")
+
+        # Prevent deleting self
+        if user_id == current_user:
+            raise HTTPException(status_code=400, detail="Cannot delete your own user")
+
+        # Delete related refresh tokens
+        conn.execute(text("DELETE FROM refresh_tokens WHERE user_id = :user_id"), {"user_id": user_id})
+        # Delete related transactions
+        conn.execute(text("DELETE FROM transactions WHERE user_id = :user_id"), {"user_id": user_id})
+        # Delete user
+        result = conn.execute(text("DELETE FROM users WHERE id = :user_id"), {"user_id": user_id})
+
+        if result.rowcount == 0:
+            raise HTTPException(status_code=404, detail="User not found")
+
+    return {"message": f"User {user_id} deleted successfully"}
+
 
 
 @user_router.put("/me", response_model=UserResponse)

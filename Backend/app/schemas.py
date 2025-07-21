@@ -39,6 +39,9 @@ class AdminUserResponse(BaseModel):
     lastname: str
     logged_in_since: datetime
 
+class AdminUpdateRequest(BaseModel):
+    is_admin: bool
+
 class UserResponse(BaseModel):
     id: int
     email: str
