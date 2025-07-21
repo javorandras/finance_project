@@ -333,7 +333,27 @@ def delete_user(
         if result.rowcount == 0:
             raise HTTPException(status_code=404, detail="User not found")
 
-    return {"message": f"User {user_id} deleted successfully"}
+    return JSONResponse(content={"message": f"User {user_id} deleted successfully"})
+
+
+@admin_router.post("/logout_all", status_code=status.HTTP_204_NO_CONTENT)
+def logout_all_users(current_user: int = Depends(get_current_user)):
+    """
+    Admin-only endpoint to log out all users by deleting all refresh tokens.
+    """
+    with engine.begin() as conn:
+        # Check if current user is admin
+        admin_check = conn.execute(
+            text("SELECT is_admin FROM users WHERE id = :id"),
+            {"id": current_user}
+        ).fetchone()
+
+        if not admin_check or not admin_check.is_admin:
+            raise HTTPException(status_code=403, detail="Admin access required")
+
+        # Delete all refresh tokens
+        conn.execute(text("DELETE FROM refresh_tokens"))
+    return JSONResponse(content={"message": "All users logged out successfully"})
 
 
 
