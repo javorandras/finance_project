@@ -12,11 +12,13 @@ class App {
 
                 $("#loginBTN").prop('disabled', true);
                 AuthUI.showSpinner();
+                logger.log(`Attempting to log in with email: ${email} and password: ${password}`);
                 let resp = await authService.login(email, password);
                 $("#loginBTN").prop('disabled', false);
                 AuthUI.hideSpinner();
 
                 if (resp && resp.status === 200) {
+                    logger.log("Login successful, received token:", resp.response.access_token);
                     authService.token = resp.response.access_token;
                     localStorage.setItem('token', authService.token);
                     clearAlerts();
@@ -58,13 +60,14 @@ class App {
                 $("#registerBTN").prop('disabled', false);
 
                 if (resp.status === 200) {
+                    logger.log("Registration successful, received token:", resp.response.access_token);
                     authService.token = resp.response.access_token;
                     localStorage.setItem('token', authService.token);
                     clearAlerts();
                     showAlert("Registration successful! Welcome aboard!", 5000, 'success');
                     await authService.loadData();
                     await AuthUI.hideRegisterForm();
-                    AuthUI.showPanel("welcomePanel");
+                    showPanel("welcomePanel");
                 } else {
                     let parsed = resp && resp.response ? JSON.parse(resp.response) : {};
                     showAlert("Registration failed: " + (parsed.detail || "No response from server."), 5000, 'error');
@@ -92,6 +95,10 @@ class App {
             })
             .on('click', '#logoutBTN', async function (e) {
                 e.preventDefault();
+                showPanel("logoutPanel");
+            })
+            .on('click', '#confirmLogoutBTN', async function (e) {
+                hidePanel("logoutPanel");
                 await authService.logout();
                 AuthUI.restorePageStyles();
                 clearAlerts();
@@ -99,6 +106,11 @@ class App {
                 $('.page-content h2').text('Welcome back!');
                 $('#total-balance, #total-income, #total-expenses, #net-savings, #goal').text('$0.00');
                 await AuthUI.showLoginForm();
+            })
+            .on('auth:userDataLoaded', function (e) {
+                const userData = e.detail;  
+                $("#transactions-body").empty(); // Clear existing transactions
+                lazyTransactions.loadTransactions();
             });
     }
 }

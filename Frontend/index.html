@@ -11,6 +11,11 @@
     <meta name="author" content="András Jávor & Bálint Dobozi" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Winky+Rough:ital,wght@0,300..900;1,300..900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/style.css" />
     <link rel="stylesheet" href="/assets/css/navbar.css" />
     <link rel="stylesheet" href="/assets/css/my_stats.css" />
@@ -42,11 +47,11 @@
             <input type="email" id="loginEmail" placeholder="Email" value="user@example.com" required>
 
             <input type="password" id="loginPassword" placeholder="Password" value="string" required>
-            <div style="display: flex; justify-content: space-between; flex-direction: row;">
-                <div class="remember-me">
+            <div style="display: flex; justify-content: right; flex-direction: row; margin-bottom: 10px;">
+                <!-- <div class="remember-me">
                     <input type="checkbox" id="rememberMe">
                     <label for="rememberMe">Remember me</label>
-                </div>
+                </div> -->
                 <div class="forgot-password">
                     <a href="#" id="showForgottenPasswordFormBTN">Forgot password?</a>
                 </div>
@@ -92,6 +97,14 @@
             <h2>Welcome to your personal finance app!</h2>
             <p>Manage your budget, track expenses, and achieve your financial goals.</p>
             <button id="getStartedBTN" onclick="hidePanel('welcomePanel');">Get Started</button>
+        </div>
+        <div class="panel" id="logoutPanel">
+            <h2>Logging out</h2>
+            <p>Are you sure you want to log out of your account?</p>
+            <div class="button-group">
+                <button id="cancelLogoutBTN" class="cancel-btn" onclick="hidePanel('logoutPanel')">Cancel</button>
+                <button id="confirmLogoutBTN">Confirm</button>
+            </div>
         </div>
 
         <div class="panel" id="filterPanel">
@@ -200,9 +213,11 @@
     </button>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="/assets/js/classes/logger.js"></script>
     <script src="/assets/js/classes/app.js"></script>
     <script src="/assets/js/classes/authui.js"></script>
     <script src="/assets/js/classes/authservice.js"></script>
+    <script src="/assets/js/classes/lazy_transactions.js"></script>
     <script src="/assets/js/prefixes.js"></script>
     <script src="/assets/js/panel.js"></script>
     <script src="/assets/js/alert.js"></script>
