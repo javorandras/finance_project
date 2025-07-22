@@ -31,6 +31,7 @@ class LazyTransactions {
 
     async loadTransactions(skip = 0, limit = 30) {
         if (this.loaded) return;
+        if (!authService.token || authService.token === 'null' || authService.token === 'undefined' || authService.token === '' || authService.token === undefined || authService.token === null) return;
 
         logger.log("Loading transactions...");
         try {

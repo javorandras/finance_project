@@ -105,10 +105,16 @@ class App {
                 showAlert("You have been logged out successfully.", 5000, 'success');
                 $('.page-content h2').text('Welcome back!');
                 $('#total-balance, #total-income, #total-expenses, #net-savings, #goal').text('$0.00');
+                if($(".auth-overlay").length == 0) {
+                    await loadAuthOverlay();
+                }
+                $("#transactions-table").remove();
+                await loadTransactionElement();
+                lazyTransactions = new LazyTransactions();
                 await AuthUI.showLoginForm();
             })
             .on('auth:userDataLoaded', function (e) {
-                const userData = e.detail;  
+                // const userData = e.detail;  
                 $("#transactions-body").empty(); // Clear existing transactions
                 lazyTransactions.loadTransactions();
             });

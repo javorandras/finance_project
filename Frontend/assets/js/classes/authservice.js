@@ -14,22 +14,23 @@ class AuthService {
                 this.userData = resp.response;
                 AuthUI.updateUserUI(this.userData);
             } else {
-                throw new Error("Failed to load user data");
+                let resp = await sendRequest('/users/refresh', 'POST');
+                if (resp.status === 200) {
+                    this.logger.log(`Session refreshed successfully. New token ${resp.response.access_token}`);
+                    this.token = resp.response.access_token;
+                    localStorage.setItem('token', this.token);
+                    await this.loadData();
+                } else {
+                    this.logger.log("Session expired or invalid token. Please log in again.");
+                    showAlert("Session expired or invalid token. Please log in again.", 5000, 'warning');
+                    this.token = null;
+                    localStorage.removeItem('token');
+                    AuthUI.showLoginForm();
+                }
             }
         } catch (e) {
-            let resp = await sendRequest('/users/refresh', 'POST');
-            if (resp.status === 200) {
-                this.logger.log(`Session refreshed successfully. New token ${resp.response.access_token}` );
-                this.token = resp.response.access_token;
-                localStorage.setItem('token', this.token);
-                await this.loadData();
-            } else {
-                this.logger.log("Session expired or invalid token. Please log in again.");
-                showAlert("Session expired or invalid token. Please log in again.", 5000, 'warning');
-                this.token = null;
-                localStorage.removeItem('token');
-                AuthUI.showLoginForm();
-            }
+            this.logger.log("Cannot load user data and refresh session.");
+            console.error("Error loading user data:", e);
         }
         document.dispatchEvent(new CustomEvent('auth:userDataLoaded', { detail: this.userData }));
         AuthUI.hideSpinner();
@@ -43,9 +44,13 @@ class AuthService {
         return await sendRequest('/users/register', 'POST', {
             firstname: firstName,
             lastname: lastName,
-            email,
-            password
+            email: email,
+            password: password
         });
+    }
+
+    async isAdmin() {
+        return this.userData && this.userData.is_admin != undefined && this.userData.isAdmin != null && this.userData.isAdmin && this.userData.is_admin;
     }
 
     async logout() {

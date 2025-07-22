@@ -27,114 +27,6 @@
 
 <body>
 
-    <nav>
-        <div class="logo">Finance</div>
-        <a class="menu-toggle" aria-label="Toggle navigation">
-            <i class="fas fa-bars"></i>
-        </a>
-        <ul class="nav-items">
-            <li><a href="/index.html">Home</a></li>
-            <li><a href="/groups.html">Groups</a></li>
-            <li><a href="/about.html">About</a></li>
-            <li><a href="#" id="logoutBTN">Logout</a></li>
-        </ul>
-    </nav>
-
-    <div class="auth-overlay">
-        <div id="loginForm" class="auth-form">
-            <h2>Please Sign In!</h2>
-
-            <input type="email" id="loginEmail" placeholder="Email" value="user@example.com" required>
-
-            <input type="password" id="loginPassword" placeholder="Password" value="string" required>
-            <div style="display: flex; justify-content: right; flex-direction: row; margin-bottom: 10px;">
-                <!-- <div class="remember-me">
-                    <input type="checkbox" id="rememberMe">
-                    <label for="rememberMe">Remember me</label>
-                </div> -->
-                <div class="forgot-password">
-                    <a href="#" id="showForgottenPasswordFormBTN">Forgot password?</a>
-                </div>
-            </div>
-            <button id="loginBTN" type="submit">Log In</button>
-            <p>Don't have an account? <a href="#" id="showRegisterBTN">Create new account</a></p>
-
-        </div>
-
-        <div id="registerForm" class="auth-form">
-            <h2>Create new account</h2>
-
-            <div style="display: flex; flex-direction: row; gap: 10px;">
-                <input type="text" id="registerFirstName" placeholder="Firstname" required>
-                <input type="text" id="registerLastName" placeholder="Lastname" required>
-            </div>
-            <input type="email" id="registerEmail" placeholder="Email" required>
-            <input type="password" id="registerPassword" placeholder="Password" required>
-            <input type="password" id="registerPasswordConf" placeholder="Confirm password" required>
-
-            <p class="disclaimer">By clicking the <em>'Create new account'</em> button, you accept our <a href=">">Terms
-                    of service</a> and <a href="#">Privacy policy</a></p>
-            <button type="submit" id="registerBTN">Create new account</button>
-            <p>Do you have an account? <a href="#" id="backToSignInBTN">Back to Sign In</a></p>
-
-        </div>
-
-        <div id="forgottenPasswordForm" class="auth-form">
-            <h2>Reset password</h2>
-
-            <div style="display: flex; flex-direction: row; gap: 10px;">
-                <input type="email" id="forgottenPasswordEmail" placeholder="Your email address" required>
-            </div>
-
-            <button type="submit">Reset password</button>
-            <p><a href="#" id="backToSignInFromForgottenPasswordForm">Back to Sign In</a></p>
-
-        </div>
-    </div>
-
-    <div class="panel-overlay">
-        <div class="panel" id="welcomePanel">
-            <h2>Welcome to your personal finance app!</h2>
-            <p>Manage your budget, track expenses, and achieve your financial goals.</p>
-            <button id="getStartedBTN" onclick="hidePanel('welcomePanel');">Get Started</button>
-        </div>
-        <div class="panel" id="logoutPanel">
-            <h2>Logging out</h2>
-            <p>Are you sure you want to log out of your account?</p>
-            <div class="button-group">
-                <button id="cancelLogoutBTN" class="cancel-btn" onclick="hidePanel('logoutPanel')">Cancel</button>
-                <button id="confirmLogoutBTN">Confirm</button>
-            </div>
-        </div>
-
-        <div class="panel" id="filterPanel">
-            <h2>Filter Transactions</h2>
-            <div class="filter-options">
-                <label for="filter-type">Type:</label>
-                <select id="filter-type">
-                    <option value="all">All</option>
-                    <option value="income">Income</option>
-                    <option value="expense">Expense</option>
-                </select>
-            </div>
-            <div class="filter-options">
-                <label for="filter-date">Date:</label>
-                <input type="date" id="filter-date" />
-            </div>
-            <div class="filter-options">
-                <label for="filter-amount">Amount:</label>
-                <input type="number" id="filter-amount" placeholder="Min amount" />
-                <input type="number" id="filter-amount-max" placeholder="Max amount" />
-            </div>
-            <div class="filter-options">
-                <label for="filter-description">Description:</label>
-                <input type="text" id="filter-description" placeholder="Enter description" />
-            </div>
-            <button id="applyFilterBTN">Apply Filter</button>
-            <button id="clearFilterBTN">Clear Filter</button>
-        </div>
-    </div>
-
     <div class="page-content">
         <h2>Welcome back!</h2>
         <div class="my-stats">
@@ -169,36 +61,7 @@
             </div>
         </div>
         <div class="transactions">
-            <table id="transactions-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Description</th>
-                        <th>Amount</th>
-                        <th>Type</th>
-                    </tr>
-                </thead>
-                <tbody id="transactions-body">
-                    <tr>
-                        <td>2023-10-01</td>
-                        <td>Salary</td>
-                        <td>$3000.00</td>
-                        <td>Income</td>
-                    </tr>
-                    <tr>
-                        <td>2023-10-05</td>
-                        <td>Groceries</td>
-                        <td>$150.00</td>
-                        <td>Expense</td>
-                    </tr>
-                    <tr>
-                        <td>2023-10-10</td>
-                        <td>Utilities</td>
-                        <td>$200.00</td>
-                        <td>Expense</td>
-                    </tr>
-                </tbody>
-            </table>
+            
         </div>
     </div>
 
@@ -213,6 +76,7 @@
     </button>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="/assets/js/utils.js"></script>
     <script src="/assets/js/classes/logger.js"></script>
     <script src="/assets/js/classes/app.js"></script>
     <script src="/assets/js/classes/authui.js"></script>

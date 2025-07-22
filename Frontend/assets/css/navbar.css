@@ -7,7 +7,7 @@
 
 nav {
     position: fixed;
-    z-index: 9999;
+    z-index: 9000;
     display: flex;
     justify-content: space-between;
     align-items: center;
