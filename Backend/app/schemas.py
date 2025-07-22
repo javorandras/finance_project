@@ -14,9 +14,9 @@ class PredictionResponse(BaseModel):
 
 class UserRegisterRequest(BaseModel):
     email: EmailStr
-    password: str
-    firstname: str
-    lastname: str
+    password: str = Field(..., min_length=6)
+    firstname: str = Field(..., min_length=1, max_length=50)
+    lastname: str = Field(..., min_length=1, max_length=50)
 
 
 class UserLoginRequest(BaseModel):
@@ -24,12 +24,12 @@ class UserLoginRequest(BaseModel):
     password: str
 
 class UserUpdateRequest(BaseModel):
-    firstname: Optional[str] = None
-    lastname: Optional[str] = None
+    firstname: Optional[str] = Field(None, min_length=1, max_length=50)
+    lastname: Optional[str] = Field(None, min_length=1, max_length=50)
     goal: Optional[Decimal] = Field(None, ge=0)
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class AdminUserResponse(BaseModel):
@@ -38,6 +38,7 @@ class AdminUserResponse(BaseModel):
     firstname: str
     lastname: str
     logged_in_since: datetime
+    is_admin: bool
 
 class AdminUpdateRequest(BaseModel):
     is_admin: bool
@@ -52,10 +53,10 @@ class UserResponse(BaseModel):
     total_expense: Decimal
     savings: Decimal
     goal: Decimal
+    is_admin: bool
 
 class TokenResponse(BaseModel):
     access_token: str
-    refresh_token: str
     token_type: str = "bearer"
 
 
@@ -65,17 +66,17 @@ class TransactionType(str, Enum):
 
 class TransactionCreateRequest(BaseModel):
     amount: Decimal = Field(..., gt=0)
-    description: str | None = None
+    description: Optional[str] = None
     type: TransactionType
 
 class TransactionUpdateRequest(BaseModel):
     amount: Optional[Decimal] = Field(None, gt=0)
-    description: Optional[str] = None
+    description: Optional[str] = Field(None, max_length=255)
     date: Optional[datetime] = None
-    type: Optional[str] = Field(None, pattern="^(income|expense)$")
+    type: Optional[TransactionType] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class TransactionResponse(BaseModel):
@@ -87,4 +88,4 @@ class TransactionResponse(BaseModel):
     date: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True

@@ -19,7 +19,6 @@ from app.schemas import (
 )
 from app.utils import clean_description, verify_password
 
-
 class APIConfig:
     REFRESH_TOKEN_EXPIRE_DAYS = 7
     SECURE = True
@@ -240,6 +239,7 @@ async def get_logged_in_users(current_user: int = Depends(get_current_user)):
                             u.email,
                             u.firstname,
                             u.lastname,
+                            u.is_admin,
                             MIN(rt.created_at) as logged_in_since
                      FROM users u
                               JOIN refresh_tokens rt ON u.id = rt.user_id
@@ -294,7 +294,8 @@ def get_user_profile(user_id: int = Depends(get_current_user)):
                         total_income,
                         total_expense,
                         savings,
-                        goal
+                        goal,
+                        is_admin
                  FROM users
                  WHERE id = :id
                  """),
@@ -336,24 +337,29 @@ def delete_user(
     return JSONResponse(content={"message": f"User {user_id} deleted successfully"})
 
 
-@admin_router.post("/logout_all", status_code=status.HTTP_204_NO_CONTENT)
+@admin_router.post("/logout_all", status_code=status.HTTP_200_OK)
 def logout_all_users(current_user: int = Depends(get_current_user)):
     """
-    Admin-only endpoint to log out all users by deleting all refresh tokens.
+    Admin-only endpoint to log out all users by truncating the refresh_tokens table.
     """
     with engine.begin() as conn:
         # Check if current user is admin
-        admin_check = conn.execute(
+        result = conn.execute(
             text("SELECT is_admin FROM users WHERE id = :id"),
             {"id": current_user}
         ).fetchone()
 
-        if not admin_check or not admin_check.is_admin:
+        if not result or not result.is_admin:
             raise HTTPException(status_code=403, detail="Admin access required")
 
-        # Delete all refresh tokens
-        conn.execute(text("DELETE FROM refresh_tokens"))
-    return JSONResponse(content={"message": "All users logged out successfully"})
+        # Temporarily disable FK checks if needed
+        conn.execute(text("TRUNCATE TABLE refresh_tokens"))
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={"message": "All users have been logged out (refresh_tokens table truncated)."}
+    )
+
 
 
 
