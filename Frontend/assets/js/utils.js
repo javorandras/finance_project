@@ -62,7 +62,6 @@ async function loadElements() {
 
     await loadTransactionElement();
 
-
     await fetch('panel-overlay.html')
         .then(res => res.text())
         .then(html => {

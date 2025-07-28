@@ -13,13 +13,13 @@ nav {
     align-items: center;
     padding: 10px 20px;
     top: 0;
+    left: 10px;
+    right: 10px;
     background-color: var(--navbar-bg);
-    margin: 5px 10px;
     border-radius: 10px;
     box-shadow: 0 4px 12px -2px var(--navbar-shadow);
     border-top: 2px solid var(--navbar-accent);
     transition: background 0.3s ease, padding 0.3s ease, box-shadow 0.3s ease;
-    width: calc(100% - 60px);
 }
 
 nav.navbar-transparent {
@@ -131,5 +131,40 @@ nav .menu-toggle i {
 
     nav .menu-toggle {
         display: flex;
+    }
+}
+
+/* Additional mobile improvements */
+@media (max-width: 430px) {
+    nav {
+        padding: 8px 15px;
+        left: 5px;
+        right: 5px;
+        border-radius: 8px;
+    }
+    
+    nav .logo {
+        font-size: 20px;
+    }
+    
+    nav ul {
+        top: 50px;
+        right: -5px;
+        min-width: 120px;
+        padding: 8px;
+    }
+    
+    nav ul.active li {
+        font-size: 11px;
+    }
+    
+    nav .menu-toggle {
+        width: 25px;
+        height: 25px;
+    }
+    
+    nav .menu-toggle span {
+        height: 2px;
+        margin: 3px 0;
     }
 }
