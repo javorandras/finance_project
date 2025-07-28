@@ -25,7 +25,7 @@ class AuthService {
                     showAlert("Session expired or invalid token. Please log in again.", 5000, 'warning');
                     this.token = null;
                     localStorage.removeItem('token');
-                    loadAuthOverlay();
+                    await loadAuthOverlay();
                     AuthUI.showLoginForm();
                 }
             }

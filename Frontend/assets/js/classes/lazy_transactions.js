@@ -13,15 +13,20 @@ class Transaction {
         if (this.loaded) return;
         $('#transactions-body').append(`
             <tr id="transaction-${this.id}">
-                <td>${this.date.toLocaleDateString()}</td>
-                <td>${this.description}</td>
-                <td>$${this.amount}</td>
-                <td>${this.type.charAt(0).toUpperCase() + this.type.slice(1)}</td>
+                <td id="transaction-date">${this.date.toLocaleDateString()}</td>
+                <td id="transaction-description">${this.description}</td>
+                <td id="transaction-amount">$${this.amount}</td>
+                <td id="transaction-type">${this.type.charAt(0).toUpperCase() + this.type.slice(1)}</td>
             </tr>
         `);
+        const amountCell = $(`#transaction-${this.id} #transaction-amount`);
+        if (this.type === 'income') {
+            amountCell.css('color', 'green');
+        } else if (this.type === 'expense') {
+            amountCell.css('color', 'red');
+        }
         this.loaded = true;
     }
-
 }
 
 class LazyTransactions {
@@ -39,7 +44,7 @@ class LazyTransactions {
                 "skip": skip,
                 "limit": limit
             });
-            if(resp.status == 200) {
+            if (resp.status == 200) {
                 for (const item of resp.response) {
                     const transaction = new Transaction(
                         item.id,
@@ -67,7 +72,7 @@ class LazyTransactions {
     }
 
     static reloadTransactions(transactions) {
-         for(const transaction of transactions) {
+        for (const transaction of transactions) {
             transaction.loaded = false; // Reset loaded state
             $('#transaction-' + transaction.id).remove(); // Remove from DOM
             transaction.load();
@@ -76,7 +81,7 @@ class LazyTransactions {
     }
 
     static refreshTransactions(transactions) {
-        for(const transaction of transactions) transaction.load();
+        for (const transaction of transactions) transaction.load();
         logger.log("Transactions refreshed.");
     }
 }

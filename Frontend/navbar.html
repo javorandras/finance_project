@@ -21,6 +21,19 @@
                 console.log("Menu toggle clicked");
                 $navMenu.toggleClass('active');
             });
+            
+            // Close mobile menu when any navigation link is clicked
+            $navMenu.find('a').on('click', function () {
+                console.log("Navigation link clicked, closing mobile menu");
+                $navMenu.removeClass('active');
+            });
+            
+            // Close mobile menu when clicking outside
+            $(document).on('click', function (e) {
+                if (!$navbar.is(e.target) && !$navbar.has(e.target).length) {
+                    $navMenu.removeClass('active');
+                }
+            });
         }
 
         $(window).on('scroll', function () {

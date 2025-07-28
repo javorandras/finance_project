@@ -182,3 +182,62 @@ footer a {
         box-sizing: border-box;
     }
 }
+
+/* Modern minimalistic scrollbar - show thumb only, hide track */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 8px;
+    min-height: 24px;
+    transition: background 0.2s;
+    border: none;
+    box-shadow: none;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-hover);
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+::-webkit-scrollbar-track-piece {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+/* Firefox scrollbar */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) transparent;
+}
+
+/* For containers that need scrolling, show minimal scrollbar */
+.transactions::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.transactions::-webkit-scrollbar-thumb {
+    background: rgba(0, 183, 255, 0.8);
+    border-radius: 6px;
+    border: none;
+}
+
+.transactions::-webkit-scrollbar-track {
+    background: transparent;
+}

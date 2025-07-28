@@ -1,9 +1,9 @@
 :root {
-    --transactions-bg: rgb(44, 44, 44);
+    --transactions-bg: rgba(44, 44, 44, 0.5);
     --transactions-accent: rgb(0, 183, 255);
     --transactions-accent-hover: rgb(0, 150, 220);
     --transactions-text: white;
-    --transactions-shadow:rgba(0, 0, 0, 0.3);
+    --transactions-shadow: rgba(0, 0, 0, 0.3);
     --transactions-item-text: rgb(200, 200, 200);
 }
 
@@ -11,29 +11,48 @@
     display: flex;
     flex-direction: column;
     background-color: var(--transactions-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-radius: 10px;
     box-shadow: 0 4px 12px -2px var(--transactions-shadow);
     margin: 5px 10px;
-    overflow-x: auto;
+    overflow: hidden; /* Contains blur within rounded borders */
     max-width: calc(100% - 20px);
-    min-width: 0; /* Ensures proper shrinking */
+    min-width: 0;
     box-sizing: border-box;
 }
 
+.transactions:hover {
+    overflow-x: auto; /* Allow horizontal scrolling on hover */
+}
+
+.transactions::-webkit-scrollbar {
+    height: 6px;
+}
+
+.transactions::-webkit-scrollbar-thumb {
+    background: rgba(0, 183, 255, 0.6);
+    border-radius: 6px;
+}
+
+.transactions::-webkit-scrollbar-track {
+    background: transparent;
+}
 
 .transactions table {
     width: 100%;
     border-collapse: collapse;
     border-radius: 10px;
     overflow: hidden;
-    min-width: 300px; /* Minimum width for readability */
+    min-width: 300px;
 }
 
-.transactions th, .transactions td {
+.transactions th,
+.transactions td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    white-space: nowrap; /* Prevent text wrapping in table cells */
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -47,8 +66,10 @@
     background-color: var(--transactions-accent);
     color: var(--transactions-text);
 }
+
 .transactions tbody tr {
     background-color: var(--transactions-bg);
+    height: 75px;
     color: var(--transactions-item-text);
 }
 
@@ -58,11 +79,14 @@
     align-items: center;
     padding: 10px;
     background-color: var(--transactions-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     margin: 5px 10px;
     border-radius: 10px;
     max-width: calc(100% - 20px);
     box-sizing: border-box;
+    overflow: hidden; /* This will contain the blur within rounded borders */
 }
 
 
@@ -107,19 +131,19 @@
     font-size: 10px;
 }
 
-/* Responsive styles for tablets */
 @media (max-width: 768px) {
     .transactions {
         margin: 3px 5px;
         border-radius: 8px;
         max-width: calc(100% - 10px);
     }
-    
-    .transactions th, .transactions td {
+
+    .transactions th,
+    .transactions td {
         padding: 10px;
         font-size: 14px;
     }
-    
+
     .new-transaction {
         flex-wrap: wrap;
         gap: 10px;
@@ -127,12 +151,12 @@
         border-radius: 8px;
         max-width: calc(100% - 10px);
     }
-    
+
     .new-transaction input {
         min-width: 120px;
         flex: 1 1 auto;
     }
-    
+
     .new-transaction-buttons {
         flex-wrap: wrap;
         min-width: 100px;
@@ -143,33 +167,35 @@
 @media (max-width: 430px) {
     .transactions {
         margin: 2px 5px;
-        border-radius: 0;
+        border-radius: 8px;
         box-shadow: none;
         font-size: 14px;
         max-width: calc(100% - 10px);
     }
-    
+
     .transactions table {
-        min-width: 280px; /* Reduced minimum width for small screens */
+        min-width: 280px;
+        /* Reduced minimum width for small screens */
     }
-    
-    .transactions th, .transactions td {
+
+    .transactions th,
+    .transactions td {
         font-size: 12px;
         padding: 6px 4px;
-        white-space: normal; /* Allow wrapping on very small screens */
+        white-space: normal;
         word-break: break-word;
     }
-    
+
     .new-transaction {
         flex-direction: column;
         align-items: stretch;
         margin: 2px 5px;
-        border-radius: 0;
+        border-radius: 8px;
         padding: 8px 4px;
         gap: 8px;
         max-width: calc(100% - 10px);
     }
-    
+
     .new-transaction input {
         margin-right: 0;
         margin-bottom: 0;
@@ -178,13 +204,13 @@
         width: 100%;
         box-sizing: border-box;
     }
-    
+
     .new-transaction-buttons {
         flex-direction: column;
         gap: 8px;
         width: 100%;
     }
-    
+
     .new-transaction button {
         width: 100%;
         font-size: 14px;
@@ -194,24 +220,26 @@
 
 /* Responsive styles for very small devices */
 @media (max-width: 320px) {
-    .transactions th, .transactions td {
+
+    .transactions th,
+    .transactions td {
         font-size: 11px;
         padding: 4px 2px;
     }
-    
+
     .transactions table {
         min-width: 260px;
     }
-    
+
     .new-transaction {
         padding: 6px 2px;
     }
-    
+
     .new-transaction input {
         font-size: 13px;
         padding: 6px;
     }
-    
+
     .new-transaction button {
         font-size: 13px;
         padding: 8px;

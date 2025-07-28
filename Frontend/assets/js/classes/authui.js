@@ -1,4 +1,11 @@
 class AuthUI {
+    // Consistent animation configuration
+    static ANIMATION_CONFIG = {
+        duration: 500,
+        easing: 'cubic-bezier(0.4,0,0.2,1)',
+        delay: 50
+    };
+
     static setAuthOverlayStyles(display = 'flex') {
         $('.auth-overlay').css({
             display,
@@ -8,12 +15,48 @@ class AuthUI {
         });
     }
 
-    static setFormStyles($form, show = true, y = '-100vh', opacity = 0, transition = 'none') {
+    static setFormStyles($form, show = true, opacity = 0, transform = 'translateY(-50px) scale(0.95)') {
         $form.css({
             display: show ? 'block' : 'none',
-            transition,
-            transform: `translateY(${y})`,
-            opacity
+            opacity,
+            transform
+        });
+    }
+
+    static applyFormAnimation($form) {
+        setTimeout(() => {
+            $form.css({
+                transition: `transform ${this.ANIMATION_CONFIG.duration}ms ${this.ANIMATION_CONFIG.easing}, opacity ${this.ANIMATION_CONFIG.duration}ms`,
+                transform: 'translateY(0) scale(1)',
+                opacity: 1
+            });
+        }, this.ANIMATION_CONFIG.delay);
+
+        $('.auth-overlay').off('click').on('click', function (e) {
+            if (e.target === this) {
+                $form.css({ animation: 'shake 0.3s' });
+                setTimeout(() => $form.css({ animation: '' }), 300);
+            }
+        });
+    }
+
+    static async hideForm($form, removeOverlay = true) {
+        if (!$form.length) {
+            console.error('Form not found in the DOM.');
+            return Promise.resolve();
+        }
+        
+        $form.css({ 
+            transform: 'translateY(-50px) scale(0.95)', 
+            opacity: 0 
+        });
+        
+        return new Promise(resolve => {
+            setTimeout(() => {
+                this.setFormStyles($form, false);
+                if (removeOverlay) this.restorePageStyles();
+                resolve();
+            }, this.ANIMATION_CONFIG.duration);
         });
     }
 
@@ -26,23 +69,9 @@ class AuthUI {
 
         const $loginForm = $('#loginForm.auth-form');
         this.setFormStyles($loginForm, true);
+        this.applyFormAnimation($loginForm);
 
-        setTimeout(() => {
-            $loginForm.css({
-                transition: 'transform 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.5s',
-                transform: 'translateY(75%)',
-                opacity: 1
-            });
-        }, 50);
-
-        $('.auth-overlay').off('click').on('click', function (e) {
-            if (e.target === this) {
-                $loginForm.css({ animation: 'shake 0.3s' });
-                setTimeout(() => $loginForm.css({ animation: '' }), 300);
-            }
-        });
-
-        return new Promise(resolve => setTimeout(resolve, 550));
+        return new Promise(resolve => setTimeout(resolve, this.ANIMATION_CONFIG.duration + 50));
     }
 
     static restorePageStyles() {
@@ -55,91 +84,41 @@ class AuthUI {
 
     static async hideLoginForm(removeOverlay = true) {
         const $loginForm = $('#loginForm.auth-form');
-        $loginForm.css({ transform: 'translateY(-100vh)', opacity: 0 });
-        return new Promise(resolve => {
-            setTimeout(() => {
-                this.setFormStyles($loginForm, false);
-                if (removeOverlay) this.restorePageStyles();
-                resolve();
-            }, 500);
-        });
+        return this.hideForm($loginForm, removeOverlay);
     }
 
     static showRegisterForm() {
         this.setAuthOverlayStyles();
         const $registerForm = $('#registerForm.auth-form');
         if (!$registerForm.length) return console.error('Register form not found in the DOM.');
+        
         this.setFormStyles($registerForm, true);
-
-        setTimeout(() => {
-            $registerForm.css({
-                transition: 'transform 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.5s',
-                transform: 'translateY(60%)',
-                opacity: 1
-            });
-        }, 50);
-
-        $('.auth-overlay').off('click').on('click', function (e) {
-            if (e.target === this) {
-                $registerForm.css({ animation: 'shake 0.3s' });
-                setTimeout(() => $registerForm.css({ animation: '' }), 300);
-            }
-        });
+        this.applyFormAnimation($registerForm);
     }
 
     static async hideRegisterForm(removeOverlay = true) {
         const $registerForm = $('#registerForm.auth-form');
-        if (!$registerForm.length) {
-            console.error('Register form not found in the DOM.');
-            return Promise.resolve();
-        }
-        $registerForm.css({ transform: 'translateY(-100vh)', opacity: 0 });
-        return new Promise(resolve => {
-            setTimeout(() => {
-                this.setFormStyles($registerForm, false);
-                if (removeOverlay) this.restorePageStyles();
-                resolve();
-            }, 500);
-        });
+        return this.hideForm($registerForm, removeOverlay);
     }
 
     static async showForgotPasswordForm() {
-        await this.hideLoginForm(false);
         this.setAuthOverlayStyles();
         const $forgotPasswordForm = $('#forgottenPasswordForm.auth-form');
         if (!$forgotPasswordForm.length) return console.error('Forgot password form not found in the DOM.');
+        
+        // Hide login form immediately without waiting
+        const $loginForm = $('#loginForm.auth-form');
+        $loginForm.css({ transform: 'translateY(-100vh)', opacity: 0 });
+        this.setFormStyles($loginForm, false);
+        
+        // Show forgot password form immediately
         this.setFormStyles($forgotPasswordForm, true);
-
-        setTimeout(() => {
-            $forgotPasswordForm.css({
-                transition: 'transform 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.5s',
-                transform: 'translateY(70%)',
-                opacity: 1
-            });
-        }, 50);
-
-        $('.auth-overlay').off('click').on('click', function (e) {
-            if (e.target === this) {
-                $forgotPasswordForm.css({ animation: 'shake 0.3s' });
-                setTimeout(() => $forgotPasswordForm.css({ animation: '' }), 300);
-            }
-        });
+        this.applyFormAnimation($forgotPasswordForm);
     }
 
     static async hideForgottenPasswordForm(removeOverlay = true) {
         const $forgotPasswordForm = $('#forgottenPasswordForm.auth-form');
-        if (!$forgotPasswordForm.length) {
-            console.error('Forgot password form not found in the DOM.');
-            return Promise.resolve();
-        }
-        $forgotPasswordForm.css({ transform: 'translateY(-100vh)', opacity: 0 });
-        return new Promise(resolve => {
-            setTimeout(() => {
-                this.setFormStyles($forgotPasswordForm, false);
-                if (removeOverlay) this.restorePageStyles();
-                resolve();
-            }, 500);
-        });
+        return this.hideForm($forgotPasswordForm, removeOverlay);
     }
 
     static showSpinner() {
